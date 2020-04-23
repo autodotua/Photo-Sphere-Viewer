@@ -3,10 +3,11 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>Photo Sphere Viewer</title>
-	<meta name="viewport" content="initial-scale=1.0" />
+	<title>全景查看器</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
 	<script src="three.min.js"></script>
-	<script src="photo-sphere-viewer.min.js"></script>
+	<script src="photo-sphere-viewer.js"></script>
 	<script src="js/jquery-3.5.0.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -29,7 +30,13 @@
 			top: 12px;
 			right: 24px;
 			overflow-y: auto;
-			height: 100%;
+			max-height: 100%;
+			background-color: lightgray;
+			padding-left: 8px;
+			padding-top: 8px;
+			padding-bottom: 8px;
+			padding-right: 32px;
+			border-radius: 6px;
 		}
 
 		.custom-file {
@@ -38,6 +45,7 @@
 
 		.btn-img {
 			width: 180px;
+			margin-top: 12px;
 		}
 
 		img {
@@ -48,6 +56,21 @@
 			top: 50%;
 			margin-top: -12px;
 			margin-left: -12px;
+		}
+
+		.btn-hide-show {
+			position: absolute;
+			right: 4px;
+			padding-left: 4px;
+			padding-right: 4px;
+		}
+
+		#btn-show {
+			top: 12px;
+		}
+
+		#btn-hide {
+			top: 45%;
 		}
 	</style>
 </head>
@@ -60,7 +83,10 @@
 				aria-describedby="customFileAddon" lang="zh-cn">
 			<label id="fileLabel" class="custom-file-label" for="customFile" data-browse="浏览">选择图片</label>
 		</div>
+		<button id="btn-hide" class="btn btn-hide-show btn-light">&gt;</button>
 	</div>
+
+	<button id="btn-show" class="btn-hide-show btn btn-light" style="display: none;">&lt;</button>
 	<script>
 		function loadImg(img) {
 			var div = document.getElementById('container');
@@ -72,15 +98,18 @@
 					backgroundColor: 'rgba(58, 67, 77, 0.7)'
 				},
 				loading_msg: "正在加载",
-				zoom_speed: 10,
+				zoom_speed: is_touch_device()?1:10,
 				min_fov: 20,
 				max_fov: 120,
 				loading_img: "loading.gif",
 				onready: () => {
-					$("#buttons").show();
+					//$("#buttons").show();
+					$("#buttons").prop('disabled', false);
 				}
 			});
 			$("#buttons").hide();
+			$("#buttons").prop('disabled', true);
+			$("#btn-show").show();
 		}
 		async function load() {
 			const imgsResp = await fetch("imgs.json");
@@ -90,28 +119,36 @@
 					const button = $("<button/>", { "class": "btn btn-img btn-light" })
 						.text(img.split("/").slice(-1)[0].split(".")[0]);
 					button.click(() => loadImg(img));
-					$("#buttons").append("<br />")
-					$("#buttons").append("<br />")
+					$("#buttons").append("<br />");
 					$("#buttons").append(button)
 				}
-				//loadImg(imgs[0]);
 			}
 
 		}
-		// Load a panorama stored on the user's computer
 		function upload() {
-			// Retrieve the chosen file and create the FileReader object
 			var file = document.getElementById('file').files[0];
 			var reader = new FileReader();
-
-			reader.onload = function () {
-				console.log(reader.result);
-
-				loadImg(reader.result);
-			};
+			reader.onload = () => loadImg(reader.result);
 			reader.readAsDataURL(file);
 		}
 		$("#file").change(upload)
+
+		$("#btn-hide").click(() => {
+			$("#buttons").hide();
+			$("#btn-show").show();
+		});
+		$("#btn-show").click(() => {
+			$("#buttons").show();
+			$("#btn-show").hide();
+		});
+		function is_touch_device() {
+			try {
+				document.createEvent("TouchEvent");
+				return true;
+			} catch (e) {
+				return false;
+			}
+		}
 		load();
 	</script>
 </body>

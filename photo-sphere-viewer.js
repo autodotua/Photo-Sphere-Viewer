@@ -98,14 +98,14 @@
  * @param {PhotoSphereViewer~onReady} [args.onready] - Function called once the panorama is ready and the first image is displayed
  **/
 
-var PhotoSphereViewer = function(args) {
+var PhotoSphereViewer = function (args) {
 	/**
 	 * Detects whether canvas is supported.
 	 * @private
 	 * @return {boolean} `true` if canvas is supported, `false` otherwise
 	 **/
 
-	var isCanvasSupported = function() {
+	var isCanvasSupported = function () {
 		var canvas = document.createElement('canvas');
 		return !!(canvas.getContext && canvas.getContext('2d'));
 	};
@@ -116,7 +116,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {boolean} `true` if WebGL is supported, `false` otherwise
 	 **/
 
-	var isWebGLSupported = function() {
+	var isWebGLSupported = function () {
 		var canvas = document.createElement('canvas');
 		return !!(window.WebGLRenderingContext && canvas.getContext('webgl'));
 	};
@@ -130,7 +130,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var addEvent = function(elt, evt, f) {
+	var addEvent = function (elt, evt, f) {
 		if (!!elt.addEventListener)
 			elt.addEventListener(evt, f, false);
 		else
@@ -146,7 +146,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {number} The checked number
 	 **/
 
-	var stayBetween = function(x, min, max) {
+	var stayBetween = function (x, min, max) {
 		return Math.max(min, Math.min(max, x));
 	};
 
@@ -160,10 +160,10 @@ var PhotoSphereViewer = function(args) {
 	 * @return {number} Square of the wanted distance
 	 **/
 
-	var dist = function(x1, y1, x2, y2) {
+	var dist = function (x1, y1, x2, y2) {
 		var x = x2 - x1;
 		var y = y2 - y1;
-		return x*x + y*y;
+		return x * x + y * y;
 	};
 
 	/**
@@ -174,9 +174,9 @@ var PhotoSphereViewer = function(args) {
 	 * @return {number} The wanted measure
 	 **/
 
-	var getAngleMeasure = function(angle, is_2pi_allowed) {
+	var getAngleMeasure = function (angle, is_2pi_allowed) {
 		is_2pi_allowed = (is_2pi_allowed !== undefined) ? !!is_2pi_allowed : false;
-		return (is_2pi_allowed && angle == 2 * Math.PI) ? 2 * Math.PI :  angle - Math.floor(angle / (2.0 * Math.PI)) * 2.0 * Math.PI;
+		return (is_2pi_allowed && angle == 2 * Math.PI) ? 2 * Math.PI : angle - Math.floor(angle / (2.0 * Math.PI)) * 2.0 * Math.PI;
 	};
 
 	/**
@@ -185,7 +185,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.load = function() {
+	this.load = function () {
 		container.innerHTML = '';
 
 		// Loading HTML: HTMLElement
@@ -249,7 +249,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {string} The data
 	 **/
 
-	var getXMPData = function(file) {
+	var getXMPData = function (file) {
 		var a = 0, b = 0;
 		var data = '';
 
@@ -270,7 +270,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {string} The value of the attribute
 	 **/
 
-	var getAttribute = function(data, attr) {
+	var getAttribute = function (data, attr) {
 		var a = data.indexOf('GPano:' + attr) + attr.length + 8, b = data.indexOf('"', a);
 
 		if (b == -1) {
@@ -288,7 +288,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var loadXMP = function() {
+	var loadXMP = function () {
 		var xhr = null;
 
 		if (window.XMLHttpRequest)
@@ -308,7 +308,7 @@ var PhotoSphereViewer = function(args) {
 			return;
 		}
 
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = function () {
 			if (xhr.readyState == 4 && xhr.status == 200) {
 				// Metadata
 				var data = getXMPData(xhr.responseText);
@@ -343,10 +343,10 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var createBuffer = function() {
+	var createBuffer = function () {
 		var img = new Image();
 
-		img.onload = function() {
+		img.onload = function () {
 			// Must the pano size be changed?
 			var default_pano_size = {
 				full_width: img.width,
@@ -458,11 +458,11 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var loadTexture = function(path) {
+	var loadTexture = function (path) {
 		var texture = new THREE.Texture();
 		var loader = new THREE.ImageLoader();
 
-		var onLoad = function(img) {
+		var onLoad = function (img) {
 			texture.needsUpdate = true;
 			texture.image = img;
 
@@ -479,7 +479,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var createScene = function(texture) {
+	var createScene = function (texture) {
 		// New size?
 		if (new_viewer_size.width !== undefined)
 			container.style.width = new_viewer_size.width.css;
@@ -501,7 +501,7 @@ var PhotoSphereViewer = function(args) {
 
 		// Sphere
 		var geometry = new THREE.SphereGeometry(200, rings, segments);
-		var material = new THREE.MeshBasicMaterial({map: texture, overdraw: true});
+		var material = new THREE.MeshBasicMaterial({ map: texture, overdraw: true });
 		var mesh = new THREE.Mesh(geometry, material);
 		mesh.scale.x = -1;
 		scene.add(mesh);
@@ -524,7 +524,7 @@ var PhotoSphereViewer = function(args) {
 			// Add the image
 			var overlay_img = document.createElement('img');
 
-			overlay_img.onload = function() {
+			overlay_img.onload = function () {
 				overlay_img.style.display = 'block';
 
 				// Image position
@@ -606,7 +606,7 @@ var PhotoSphereViewer = function(args) {
 	* @return {void}
 	**/
 
-	var render = function() {
+	var render = function () {
 		var point = new THREE.Vector3();
 		point.setX(Math.cos(lat) * Math.sin(long));
 		point.setY(Math.sin(lat));
@@ -618,8 +618,12 @@ var PhotoSphereViewer = function(args) {
 		if (stereo_effect !== null)
 			stereo_effect.render(scene, camera);
 
-		else
+		else {
+			//这段是我autodotua加的，使其在不同缩放比例得屏幕上正常显示
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize( window.innerWidth,window. innerHeight );
 			renderer.render(scene, camera);
+		}
 	};
 
 	/**
@@ -628,7 +632,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var startStereo = function() {
+	var startStereo = function () {
 		stereo_effect = new THREE.StereoEffect(renderer);
 		stereo_effect.eyeSeparation = eyes_offset;
 		stereo_effect.setSize(viewer_size.width, viewer_size.height);
@@ -653,7 +657,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var stopStereo = function() {
+	var stopStereo = function () {
 		stereo_effect = null;
 		renderer.setSize(viewer_size.width, viewer_size.height);
 
@@ -669,7 +673,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.toggleStereo = function() {
+	this.toggleStereo = function () {
 		if (stereo_effect !== null)
 			stopStereo();
 
@@ -683,7 +687,7 @@ var PhotoSphereViewer = function(args) {
 	* @return {void}
 	**/
 
-	var anim = function() {
+	var anim = function () {
 		if (anim_delay !== false)
 			anim_timeout = setTimeout(startAutorotate, anim_delay);
 	};
@@ -694,7 +698,7 @@ var PhotoSphereViewer = function(args) {
 	* @return {void}
 	**/
 
-	var autorotate = function() {
+	var autorotate = function () {
 		lat -= (lat - anim_lat_target) * anim_lat_offset;
 
 		long += anim_long_offset;
@@ -735,7 +739,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var startAutorotate = function() {
+	var startAutorotate = function () {
 		autorotate();
 
 		/**
@@ -753,7 +757,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var stopAutorotate = function() {
+	var stopAutorotate = function () {
 		clearTimeout(anim_timeout);
 		anim_timeout = null;
 
@@ -769,7 +773,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.toggleAutorotate = function() {
+	this.toggleAutorotate = function () {
 		clearTimeout(anim_timeout);
 
 		if (!!autorotate_timeout)
@@ -785,7 +789,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var fitToContainer = function() {
+	var fitToContainer = function () {
 		if (container.clientWidth != viewer_size.width || container.clientHeight != viewer_size.height) {
 			resize({
 				width: container.clientWidth,
@@ -800,7 +804,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.fitToContainer = function() {
+	this.fitToContainer = function () {
 		fitToContainer();
 	};
 
@@ -813,7 +817,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var resize = function(size) {
+	var resize = function (size) {
 		viewer_size.width = (size.width !== undefined) ? parseInt(size.width) : viewer_size.width;
 		viewer_size.height = (size.height !== undefined) ? parseInt(size.height) : viewer_size.height;
 		viewer_size.ratio = viewer_size.width / viewer_size.height;
@@ -839,7 +843,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {object} A longitude/latitude couple
 	 **/
 
-	this.getPosition = function() {
+	this.getPosition = function () {
 		return {
 			longitude: long,
 			latitude: lat
@@ -851,7 +855,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {object} A longitude/latitude couple
 	 **/
 
-	this.getPositionInDegrees = function() {
+	this.getPositionInDegrees = function () {
 		return {
 			longitude: long * 180.0 / Math.PI,
 			latitude: lat * 180.0 / Math.PI
@@ -866,7 +870,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var moveTo = function(longitude, latitude) {
+	var moveTo = function (longitude, latitude) {
 		var long_tmp = parseAngle(longitude);
 
 		if (!whole_circle)
@@ -906,7 +910,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.moveTo = function(longitude, latitude) {
+	this.moveTo = function (longitude, latitude) {
 		moveTo(longitude, latitude);
 	};
 
@@ -918,7 +922,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var rotate = function(dlong, dlat) {
+	var rotate = function (dlong, dlat) {
 		dlong = parseAngle(dlong);
 		dlat = parseAngle(dlat);
 
@@ -933,7 +937,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.rotate = function(dlong, dlat) {
+	this.rotate = function (dlong, dlat) {
 		rotate(dlong, dlat);
 	};
 
@@ -944,7 +948,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var toggleArrowKeys = function(attach) {
+	var toggleArrowKeys = function (attach) {
 		var action = (attach) ? window.addEventListener : window.removeEventListener;
 		action('keydown', keyDown);
 	};
@@ -956,7 +960,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {string} The code
 	 **/
 
-	var retrieveKey = function(evt) {
+	var retrieveKey = function (evt) {
 		// The Holy Grail
 		if (evt.key) {
 			var key = (/^Arrow/.test(evt.key)) ? evt.key : 'Arrow' + evt.key;
@@ -989,7 +993,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var keyDown = function(evt) {
+	var keyDown = function (evt) {
 		var dlong = 0, dlat = 0;
 
 		switch (retrieveKey(evt)) {
@@ -1020,7 +1024,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var onMouseDown = function(evt) {
+	var onMouseDown = function (evt) {
 		startMove(parseInt(evt.clientX), parseInt(evt.clientY));
 	};
 
@@ -1031,7 +1035,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var onTouchStart = function(evt) {
+	var onTouchStart = function (evt) {
 		// Move
 		if (evt.touches.length == 1) {
 			var touch = evt.touches[0];
@@ -1059,7 +1063,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var startMove = function(x, y) {
+	var startMove = function (x, y) {
 		// Store the current position of the mouse
 		mouse_x = x;
 		mouse_y = y;
@@ -1078,7 +1082,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var startTouchZoom = function(d) {
+	var startTouchZoom = function (d) {
 		touchzoom_dist = d;
 
 		touchzoom = true;
@@ -1091,7 +1095,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var onMouseUp = function(evt) {
+	var onMouseUp = function (evt) {
 		mousedown = false;
 		touchzoom = false;
 	};
@@ -1103,7 +1107,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var onMouseMove = function(evt) {
+	var onMouseMove = function (evt) {
 		evt.preventDefault();
 		move(parseInt(evt.clientX), parseInt(evt.clientY));
 	};
@@ -1115,7 +1119,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var onTouchMove = function(evt) {
+	var onTouchMove = function (evt) {
 		// Move
 		if (evt.touches.length == 1 && mousedown) {
 			var touch = evt.touches[0];
@@ -1152,7 +1156,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var move = function(x, y) {
+	var move = function (x, y) {
 		if (mousedown) {
 			// Smooth movement
 			if (smooth_user_moves) {
@@ -1193,7 +1197,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var startDeviceOrientation = function() {
+	var startDeviceOrientation = function () {
 		sphoords.start();
 		stopAutorotate();
 
@@ -1212,7 +1216,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var stopDeviceOrientation = function() {
+	var stopDeviceOrientation = function () {
 		sphoords.stop();
 
 		triggerAction('device-orientation', false);
@@ -1224,7 +1228,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.toggleDeviceOrientation = function() {
+	this.toggleDeviceOrientation = function () {
 		if (sphoords.isEventAttached())
 			stopDeviceOrientation();
 
@@ -1241,7 +1245,7 @@ var PhotoSphereViewer = function(args) {
 	* @return {void}
 	**/
 
-	var onDeviceOrientation = function(coords) {
+	var onDeviceOrientation = function (coords) {
 		long = stayBetween(coords.longitude, PSV_MIN_LONGITUDE, PSV_MAX_LONGITUDE);
 		lat = stayBetween(coords.latitude, PSV_TILT_DOWN_MAX, PSV_TILT_UP_MAX);
 
@@ -1260,7 +1264,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var onMouseWheel = function(evt) {
+	var onMouseWheel = function (evt) {
 		evt.preventDefault();
 		evt.stopPropagation();
 
@@ -1279,7 +1283,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.mouseWheel = function(evt) {
+	this.mouseWheel = function (evt) {
 		onMouseWheel(evt);
 	};
 
@@ -1290,7 +1294,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var zoom = function(level) {
+	var zoom = function (level) {
 		zoom_lvl = stayBetween(level, 0, 100);
 		fov = PSV_FOV_MAX + (zoom_lvl / 100) * (PSV_FOV_MIN - PSV_FOV_MAX);
 
@@ -1313,7 +1317,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {integer} The current zoom level (between 0 and 100)
 	 **/
 
-	this.getZoomLevel = function() {
+	this.getZoomLevel = function () {
 		return zoom_lvl;
 	};
 
@@ -1324,7 +1328,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.zoom = function(level) {
+	this.zoom = function (level) {
 		zoom(level);
 	};
 
@@ -1334,7 +1338,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.zoomIn = function() {
+	this.zoomIn = function () {
 		if (zoom_lvl < 100)
 			zoom(zoom_lvl + zoom_speed);
 	};
@@ -1345,7 +1349,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.zoomOut = function() {
+	this.zoomOut = function () {
 		if (zoom_lvl > 0)
 			zoom(zoom_lvl - zoom_speed);
 	};
@@ -1356,7 +1360,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {boolean} `true` if fullscreen is enabled, `false` otherwise
 	 **/
 
-	var isFullscreenEnabled = function() {
+	var isFullscreenEnabled = function () {
 		return (!!document.fullscreenElement || !!document.mozFullScreenElement || !!document.webkitFullscreenElement || !!document.msFullscreenElement);
 	};
 
@@ -1366,7 +1370,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var fullscreenToggled = function() {
+	var fullscreenToggled = function () {
 		// Fix the (weird and ugly) Chrome and IE behaviors
 		if (!!document.webkitFullscreenElement || !!document.msFullscreenElement) {
 			real_viewer_size.width = container.style.width;
@@ -1398,7 +1402,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var enableFullscreen = function() {
+	var enableFullscreen = function () {
 		if (!!container.requestFullscreen)
 			container.requestFullscreen();
 
@@ -1418,7 +1422,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var disableFullscreen = function() {
+	var disableFullscreen = function () {
 		if (!!document.exitFullscreen)
 			document.exitFullscreen();
 
@@ -1438,7 +1442,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.toggleFullscreen = function() {
+	this.toggleFullscreen = function () {
 		// Switches to fullscreen mode
 		if (!isFullscreenEnabled())
 			enableFullscreen();
@@ -1454,7 +1458,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var showNavbar = function() {
+	var showNavbar = function () {
 		if (display_navbar)
 			navbar.show();
 	};
@@ -1466,7 +1470,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {number} The speed in radians
 	 **/
 
-	var parseAnimationSpeed = function(speed) {
+	var parseAnimationSpeed = function (speed) {
 		speed = speed.toString().trim();
 
 		// Speed extraction
@@ -1527,7 +1531,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {number} The angle in radians
 	 **/
 
-	var parseAngle = function(angle) {
+	var parseAngle = function (angle) {
 		angle = angle.toString().trim();
 
 		// Angle extraction
@@ -1549,7 +1553,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var setNewViewerSize = function(size) {
+	var setNewViewerSize = function (size) {
 		// Checks all the values
 		for (var dim in size) {
 			// Only width and height matter
@@ -1566,9 +1570,9 @@ var PhotoSphereViewer = function(args) {
 
 				// We're good
 				new_viewer_size[dim] = {
-						css: size_value + size_unit,
-						unit: size_unit
-					};
+					css: size_value + size_unit,
+					unit: size_unit
+				};
 			}
 		}
 	};
@@ -1581,7 +1585,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	this.addAction = function(name, f) {
+	this.addAction = function (name, f) {
 		// New action?
 		if (!(name in actions))
 			actions[name] = [];
@@ -1597,7 +1601,7 @@ var PhotoSphereViewer = function(args) {
 	 * @return {void}
 	 **/
 
-	var triggerAction = function(name, arg) {
+	var triggerAction = function (name, arg) {
 		// Does the action have any function?
 		if ((name in actions) && !!actions[name].length) {
 			for (var i = 0, l = actions[name].length; i < l; ++i) {
@@ -1872,7 +1876,7 @@ var PhotoSphereViewer = function(args) {
  * @param {PhotoSphereViewer} psv - A PhotoSphereViewer object
  **/
 
-var PSVNavBar = function(psv) {
+var PSVNavBar = function (psv) {
 	/**
 	 * Checks if a value exists in an array.
 	 * @private
@@ -1881,7 +1885,7 @@ var PSVNavBar = function(psv) {
 	 * @return {boolean} `true` if the value exists in the array, `false` otherwise
 	 **/
 
-	var inArray = function(searched, array) {
+	var inArray = function (searched, array) {
 		for (var i = 0, l = array.length; i < l; ++i) {
 			if (array[i] == searched)
 				return true;
@@ -1898,22 +1902,22 @@ var PSVNavBar = function(psv) {
 	 * @return {boolean} `true` if the value is valid, `false` otherwise
 	 **/
 
-	var checkValue = function(property, value) {
+	var checkValue = function (property, value) {
 		return (
-				// Color
+			// Color
+			(
+				inArray(property, colors) && (typeof value == 'string') &&
 				(
-					inArray(property, colors) && (typeof value == 'string') &&
-					(
-						value == 'transparent' ||
-						!!value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/) ||
-						!!value.match(/^rgb\((1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])(,\s*(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){2}\)$/) ||
-						!!value.match(/^rgba\(((1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),\s*){3}(0(\.[0-9]*)?|1)\)$/)
-					)
-				) ||
+					value == 'transparent' ||
+					!!value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/) ||
+					!!value.match(/^rgb\((1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])(,\s*(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){2}\)$/) ||
+					!!value.match(/^rgba\(((1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),\s*){3}(0(\.[0-9]*)?|1)\)$/)
+				)
+			) ||
 
-				// Number
-				(inArray(property, numbers) && !isNaN(parseFloat(value)) && isFinite(value) && value >= 0)
-			);
+			// Number
+			(inArray(property, numbers) && !isNaN(parseFloat(value)) && isFinite(value) && value >= 0)
+		);
 	};
 
 	/**
@@ -1937,7 +1941,7 @@ var PSVNavBar = function(psv) {
 	 * @return {void}
 	 **/
 
-	this.setStyle = function(new_style) {
+	this.setStyle = function (new_style) {
 		// Properties to change
 		for (var property in new_style) {
 			// Is this property a property we'll use?
@@ -1952,7 +1956,7 @@ var PSVNavBar = function(psv) {
 	 * @return {void}
 	 **/
 
-	this.create = function() {
+	this.create = function () {
 		// Container
 		container = document.createElement('div');
 		container.style.backgroundColor = style.backgroundColor;
@@ -1994,7 +1998,7 @@ var PSVNavBar = function(psv) {
 	 * @return {HTMLElement} The bar
 	 **/
 
-	this.getBar = function() {
+	this.getBar = function () {
 		return container;
 	};
 
@@ -2004,7 +2008,7 @@ var PSVNavBar = function(psv) {
 	 * @return {void}
 	 **/
 
-	var show = function() {
+	var show = function () {
 		// Stop hiding the bar if necessary
 		if (!!must_hide_timeout) {
 			clearTimeout(must_hide_timeout);
@@ -2029,7 +2033,7 @@ var PSVNavBar = function(psv) {
 	 * @return {void}
 	 **/
 
-	this.show = function() {
+	this.show = function () {
 		show();
 	};
 
@@ -2039,7 +2043,7 @@ var PSVNavBar = function(psv) {
 	 * @return {void}
 	 **/
 
-	var hide = function() {
+	var hide = function () {
 		if (!hidden) {
 			container.style.bottom = (-container.offsetHeight + 1) + 'px';
 			hidden = true;
@@ -2052,7 +2056,7 @@ var PSVNavBar = function(psv) {
 	 * @return {void}
 	 **/
 
-	this.hide = function() {
+	this.hide = function () {
 		hide();
 	};
 
@@ -2062,7 +2066,7 @@ var PSVNavBar = function(psv) {
 	 * @return {boolean} `true` if navigation bar is hidden, `false` otherwise
 	 **/
 
-	this.isHidden = function() {
+	this.isHidden = function () {
 		return hidden;
 	};
 
@@ -2073,7 +2077,7 @@ var PSVNavBar = function(psv) {
 	 * @return {void}
 	 **/
 
-	this.mustBeHidden = function(state) {
+	this.mustBeHidden = function (state) {
 		must_be_hidden = (state !== undefined) ? !!state : true;
 
 		if (must_be_hidden)
@@ -2085,48 +2089,48 @@ var PSVNavBar = function(psv) {
 
 	// Default style
 	var style = {
-			// Bar background
-			backgroundColor: 'rgba(61, 61, 61, 0.5)',
+		// Bar background
+		backgroundColor: 'rgba(61, 61, 61, 0.5)',
 
-			// Buttons foreground color
-			buttonsColor: 'rgba(255, 255, 255, 0.7)',
+		// Buttons foreground color
+		buttonsColor: 'rgba(255, 255, 255, 0.7)',
 
-			// Buttons background color
-			buttonsBackgroundColor: 'transparent',
+		// Buttons background color
+		buttonsBackgroundColor: 'transparent',
 
-			// Buttons background color when active
-			activeButtonsBackgroundColor: 'rgba(255, 255, 255, 0.1)',
+		// Buttons background color when active
+		activeButtonsBackgroundColor: 'rgba(255, 255, 255, 0.1)',
 
-			// Buttons height in pixels
-			buttonsHeight: 20,
+		// Buttons height in pixels
+		buttonsHeight: 20,
 
-			// Autorotate icon thickness in pixels
-			autorotateThickness: 1,
+		// Autorotate icon thickness in pixels
+		autorotateThickness: 1,
 
-			// Zoom range width in pixels
-			zoomRangeWidth: 50,
+		// Zoom range width in pixels
+		zoomRangeWidth: 50,
 
-			// Zoom range thickness in pixels
-			zoomRangeThickness: 1,
+		// Zoom range thickness in pixels
+		zoomRangeThickness: 1,
 
-			// Zoom range disk diameter in pixels
-			zoomRangeDisk: 7,
+		// Zoom range disk diameter in pixels
+		zoomRangeDisk: 7,
 
-			// Fullscreen icon ratio
-			fullscreenRatio: 4 / 3,
+		// Fullscreen icon ratio
+		fullscreenRatio: 4 / 3,
 
-			// Fullscreen icon thickness in pixels
-			fullscreenThickness: 2,
+		// Fullscreen icon thickness in pixels
+		fullscreenThickness: 2,
 
-			// Gyroscope icon thickness in pixels
-			gyroscopeThickness: 1,
+		// Gyroscope icon thickness in pixels
+		gyroscopeThickness: 1,
 
-			// Virtual reality icon ratio
-			virtualRealityRatio: 4 / 3,
+		// Virtual reality icon ratio
+		virtualRealityRatio: 4 / 3,
 
-			// Virtual reality icon border radius in pixels
-			virtualRealityBorderRadius: 2
-		};
+		// Virtual reality icon border radius in pixels
+		virtualRealityBorderRadius: 2
+	};
 
 	// Properties types
 	var colors = ['backgroundColor', 'buttonsColor', 'buttonsBackgroundColor', 'activeButtonsBackgroundColor'];
@@ -2146,7 +2150,7 @@ var PSVNavBar = function(psv) {
  * @param {object} style - Style of the navigation bar
  **/
 
-var PSVNavBarButton = function(psv, type, style) {
+var PSVNavBarButton = function (psv, type, style) {
     /**
      * Attaches an event handler function to an elemnt.
      * @private
@@ -2156,12 +2160,12 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var addEvent = function(elt, evt, f) {
-        if (!!elt.addEventListener)
-            elt.addEventListener(evt, f, false);
-        else
-            elt.attachEvent('on' + evt, f);
-    };
+	var addEvent = function (elt, evt, f) {
+		if (!!elt.addEventListener)
+			elt.addEventListener(evt, f, false);
+		else
+			elt.attachEvent('on' + evt, f);
+	};
 
     /**
      * Creates the right button.
@@ -2169,331 +2173,331 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var create = function() {
-        switch (type) {
-            case 'autorotate':
-                // Autorotate icon sizes
-        		var autorotate_sphere_width = style.buttonsHeight - style.autorotateThickness * 2;
-        		var autorotate_equator_height = autorotate_sphere_width / 10;
+	var create = function () {
+		switch (type) {
+			case 'autorotate':
+				// Autorotate icon sizes
+				var autorotate_sphere_width = style.buttonsHeight - style.autorotateThickness * 2;
+				var autorotate_equator_height = autorotate_sphere_width / 10;
 
-        		// Autorotate button
-        		button = document.createElement('div');
-        		button.style.cssFloat = 'left';
-        		button.style.boxSizing = 'inherit';
-        		button.style.padding = '10px';
-        		button.style.width = style.buttonsHeight + 'px';
-        		button.style.height = style.buttonsHeight + 'px';
-        		button.style.backgroundColor = style.buttonsBackgroundColor;
-        		button.style.position = 'relative';
-        		button.style.cursor = 'pointer';
+				// Autorotate button
+				button = document.createElement('div');
+				button.style.cssFloat = 'left';
+				button.style.boxSizing = 'inherit';
+				button.style.padding = '10px';
+				button.style.width = style.buttonsHeight + 'px';
+				button.style.height = style.buttonsHeight + 'px';
+				button.style.backgroundColor = style.buttonsBackgroundColor;
+				button.style.position = 'relative';
+				button.style.cursor = 'pointer';
 
-                addEvent(button, 'click', function(){psv.toggleAutorotate();});
+				addEvent(button, 'click', function () { psv.toggleAutorotate(); });
 
-        		var autorotate_sphere = document.createElement('div');
-        		autorotate_sphere.style.boxSizing = 'inherit';
-        		autorotate_sphere.style.width = autorotate_sphere_width + 'px';
-        		autorotate_sphere.style.height = autorotate_sphere_width + 'px';
-        		autorotate_sphere.style.borderRadius = '50%';
-        		autorotate_sphere.style.border = style.autorotateThickness + 'px solid ' + style.buttonsColor;
-        		button.appendChild(autorotate_sphere);
+				var autorotate_sphere = document.createElement('div');
+				autorotate_sphere.style.boxSizing = 'inherit';
+				autorotate_sphere.style.width = autorotate_sphere_width + 'px';
+				autorotate_sphere.style.height = autorotate_sphere_width + 'px';
+				autorotate_sphere.style.borderRadius = '50%';
+				autorotate_sphere.style.border = style.autorotateThickness + 'px solid ' + style.buttonsColor;
+				button.appendChild(autorotate_sphere);
 
-        		var autorotate_equator = document.createElement('div');
-        		autorotate_equator.style.boxSizing = 'inherit';
-        		autorotate_equator.style.width = autorotate_sphere_width + 'px';
-        		autorotate_equator.style.height = autorotate_equator_height + 'px';
-        		autorotate_equator.style.borderRadius = '50%';
-        		autorotate_equator.style.border = style.autorotateThickness + 'px solid ' + style.buttonsColor;
-        		autorotate_equator.style.position = 'absolute';
-        		autorotate_equator.style.top = '50%';
-        		autorotate_equator.style.marginTop = -(autorotate_equator_height / 2 + style.autorotateThickness) + 'px';
-        		button.appendChild(autorotate_equator);
+				var autorotate_equator = document.createElement('div');
+				autorotate_equator.style.boxSizing = 'inherit';
+				autorotate_equator.style.width = autorotate_sphere_width + 'px';
+				autorotate_equator.style.height = autorotate_equator_height + 'px';
+				autorotate_equator.style.borderRadius = '50%';
+				autorotate_equator.style.border = style.autorotateThickness + 'px solid ' + style.buttonsColor;
+				autorotate_equator.style.position = 'absolute';
+				autorotate_equator.style.top = '50%';
+				autorotate_equator.style.marginTop = -(autorotate_equator_height / 2 + style.autorotateThickness) + 'px';
+				button.appendChild(autorotate_equator);
 
-                // (In)active
-                psv.addAction('autorotate', toggleActive);
+				// (In)active
+				psv.addAction('autorotate', toggleActive);
 
-                break;
+				break;
 
-            case 'zoom':
-                // Zoom container
-                button = document.createElement('div');
-                button.style.cssFloat = 'left';
-        		button.style.boxSizing = 'inherit';
+			case 'zoom':
+				// Zoom container
+				button = document.createElement('div');
+				button.style.cssFloat = 'left';
+				button.style.boxSizing = 'inherit';
 
-        		// Zoom "-"
-        		var zoom_minus = document.createElement('div');
-        		zoom_minus.style.cssFloat = 'left';
-        		zoom_minus.style.boxSizing = 'inherit';
-        		zoom_minus.style.padding = '10px';
-        		zoom_minus.style.height = style.buttonsHeight + 'px';
-        		zoom_minus.style.backgroundColor = style.buttonsBackgroundColor;
-        		zoom_minus.style.lineHeight = style.buttonsHeight + 'px';
-        		zoom_minus.style.color = style.buttonsColor;
-        		zoom_minus.style.cursor = 'pointer';
-        		zoom_minus.textContent = '-';
+				// Zoom "-"
+				var zoom_minus = document.createElement('div');
+				zoom_minus.style.cssFloat = 'left';
+				zoom_minus.style.boxSizing = 'inherit';
+				zoom_minus.style.padding = '10px';
+				zoom_minus.style.height = style.buttonsHeight + 'px';
+				zoom_minus.style.backgroundColor = style.buttonsBackgroundColor;
+				zoom_minus.style.lineHeight = style.buttonsHeight + 'px';
+				zoom_minus.style.color = style.buttonsColor;
+				zoom_minus.style.cursor = 'pointer';
+				zoom_minus.textContent = '-';
 
-        		addEvent(zoom_minus, 'click', function(){psv.zoomOut();});
-                button.appendChild(zoom_minus);
+				addEvent(zoom_minus, 'click', function () { psv.zoomOut(); });
+				button.appendChild(zoom_minus);
 
-        		// Zoom range
-        		zoom_range_bg = document.createElement('div');
-        		zoom_range_bg.style.cssFloat = 'left';
-        		zoom_range_bg.style.boxSizing = 'inherit';
-        		zoom_range_bg.style.padding = (10 + (style.buttonsHeight - style.zoomRangeThickness) / 2) + 'px 5px';
-        		zoom_range_bg.style.backgroundColor = style.buttonsBackgroundColor;
-                zoom_range_bg.style.cursor = 'pointer';
-                button.appendChild(zoom_range_bg);
+				// Zoom range
+				zoom_range_bg = document.createElement('div');
+				zoom_range_bg.style.cssFloat = 'left';
+				zoom_range_bg.style.boxSizing = 'inherit';
+				zoom_range_bg.style.padding = (10 + (style.buttonsHeight - style.zoomRangeThickness) / 2) + 'px 5px';
+				zoom_range_bg.style.backgroundColor = style.buttonsBackgroundColor;
+				zoom_range_bg.style.cursor = 'pointer';
+				button.appendChild(zoom_range_bg);
 
-        		zoom_range = document.createElement('div');
-        		zoom_range.style.boxSizing = 'inherit';
-        		zoom_range.style.width = style.zoomRangeWidth + 'px';
-        		zoom_range.style.height = style.zoomRangeThickness + 'px';
-        		zoom_range.style.backgroundColor = style.buttonsColor;
-        		zoom_range.style.position = 'relative';
-        		zoom_range_bg.appendChild(zoom_range);
+				zoom_range = document.createElement('div');
+				zoom_range.style.boxSizing = 'inherit';
+				zoom_range.style.width = style.zoomRangeWidth + 'px';
+				zoom_range.style.height = style.zoomRangeThickness + 'px';
+				zoom_range.style.backgroundColor = style.buttonsColor;
+				zoom_range.style.position = 'relative';
+				zoom_range_bg.appendChild(zoom_range);
 
-        		zoom_value = document.createElement('div');
-        		zoom_value.style.position = 'absolute';
-        		zoom_value.style.top = ((style.zoomRangeThickness - style.zoomRangeDisk) / 2) + 'px';
-        		zoom_value.style.left = -(style.zoomRangeDisk / 2) + 'px';
-        		zoom_value.style.boxSizing = 'inherit';
-        		zoom_value.style.width = style.zoomRangeDisk + 'px';
-        		zoom_value.style.height = style.zoomRangeDisk + 'px';
-        		zoom_value.style.borderRadius = '50%';
-        		zoom_value.style.backgroundColor = style.buttonsColor;
+				zoom_value = document.createElement('div');
+				zoom_value.style.position = 'absolute';
+				zoom_value.style.top = ((style.zoomRangeThickness - style.zoomRangeDisk) / 2) + 'px';
+				zoom_value.style.left = -(style.zoomRangeDisk / 2) + 'px';
+				zoom_value.style.boxSizing = 'inherit';
+				zoom_value.style.width = style.zoomRangeDisk + 'px';
+				zoom_value.style.height = style.zoomRangeDisk + 'px';
+				zoom_value.style.borderRadius = '50%';
+				zoom_value.style.backgroundColor = style.buttonsColor;
 
-                psv.addAction('zoom-updated', moveZoomValue);
-                addEvent(zoom_range_bg, 'mousedown', initZoomChangeWithMouse);
-                addEvent(zoom_range_bg, 'touchstart', initZoomChangeByTouch);
-                addEvent(document, 'mousemove', changeZoomWithMouse);
-                addEvent(document, 'touchmove', changeZoomByTouch);
-                addEvent(document, 'mouseup', stopZoomChange);
-                addEvent(document, 'touchend', stopZoomChange);
+				psv.addAction('zoom-updated', moveZoomValue);
+				addEvent(zoom_range_bg, 'mousedown', initZoomChangeWithMouse);
+				addEvent(zoom_range_bg, 'touchstart', initZoomChangeByTouch);
+				addEvent(document, 'mousemove', changeZoomWithMouse);
+				addEvent(document, 'touchmove', changeZoomByTouch);
+				addEvent(document, 'mouseup', stopZoomChange);
+				addEvent(document, 'touchend', stopZoomChange);
 				addEvent(zoom_range_bg, 'mousewheel', changeZoomOnMouseWheel);
 				addEvent(zoom_range_bg, 'DOMMouseScroll', changeZoomOnMouseWheel);
-                zoom_range.appendChild(zoom_value);
+				zoom_range.appendChild(zoom_value);
 
-        		// Zoom "+"
-        		var zoom_plus = document.createElement('div');
-        		zoom_plus.style.cssFloat = 'left';
-        		zoom_plus.style.boxSizing = 'inherit';
-        		zoom_plus.style.padding = '10px';
-        		zoom_plus.style.height = style.buttonsHeight + 'px';
-        		zoom_plus.style.backgroundColor = style.buttonsBackgroundColor;
-        		zoom_plus.style.lineHeight = style.buttonsHeight + 'px';
-        		zoom_plus.style.color = style.buttonsColor;
-        		zoom_plus.style.cursor = 'pointer';
-        		zoom_plus.textContent = '+';
+				// Zoom "+"
+				var zoom_plus = document.createElement('div');
+				zoom_plus.style.cssFloat = 'left';
+				zoom_plus.style.boxSizing = 'inherit';
+				zoom_plus.style.padding = '10px';
+				zoom_plus.style.height = style.buttonsHeight + 'px';
+				zoom_plus.style.backgroundColor = style.buttonsBackgroundColor;
+				zoom_plus.style.lineHeight = style.buttonsHeight + 'px';
+				zoom_plus.style.color = style.buttonsColor;
+				zoom_plus.style.cursor = 'pointer';
+				zoom_plus.textContent = '+';
 
-        		addEvent(zoom_plus, 'click', function(){psv.zoomIn();});
-        		button.appendChild(zoom_plus);
+				addEvent(zoom_plus, 'click', function () { psv.zoomIn(); });
+				button.appendChild(zoom_plus);
 
-                break;
+				break;
 
-            case 'fullscreen':
-                // Fullscreen icon size
-        		var fullscreen_width = style.buttonsHeight * style.fullscreenRatio;
+			case 'fullscreen':
+				// Fullscreen icon size
+				var fullscreen_width = style.buttonsHeight * style.fullscreenRatio;
 
-        		var fullscreen_vertical_space = style.buttonsHeight * 0.3;
-        		var fullscreen_vertical_border = (style.buttonsHeight - fullscreen_vertical_space) / 2;
+				var fullscreen_vertical_space = style.buttonsHeight * 0.3;
+				var fullscreen_vertical_border = (style.buttonsHeight - fullscreen_vertical_space) / 2;
 
-        		var fullscreen_horizontal_space = fullscreen_width * 0.3;
-        		var fullscreen_horizontal_border = (fullscreen_width - fullscreen_horizontal_space) / 2 - style.fullscreenThickness;
-        		var fullscreen_vertical_int = style.buttonsHeight - style.fullscreenThickness * 2;
+				var fullscreen_horizontal_space = fullscreen_width * 0.3;
+				var fullscreen_horizontal_border = (fullscreen_width - fullscreen_horizontal_space) / 2 - style.fullscreenThickness;
+				var fullscreen_vertical_int = style.buttonsHeight - style.fullscreenThickness * 2;
 
-        		// Fullscreen button
-        		button = document.createElement('div');
-        		button.style.cssFloat = 'right';
-        		button.style.boxSizing = 'inherit';
-        		button.style.padding = '10px';
-        		button.style.width = fullscreen_width + 'px';
-        		button.style.height = style.buttonsHeight + 'px';
-        		button.style.backgroundColor = style.buttonsBackgroundColor;
-        		button.style.cursor = 'pointer';
+				// Fullscreen button
+				button = document.createElement('div');
+				button.style.cssFloat = 'right';
+				button.style.boxSizing = 'inherit';
+				button.style.padding = '10px';
+				button.style.width = fullscreen_width + 'px';
+				button.style.height = style.buttonsHeight + 'px';
+				button.style.backgroundColor = style.buttonsBackgroundColor;
+				button.style.cursor = 'pointer';
 
-        		addEvent(button, 'click', function(){psv.toggleFullscreen();});
+				addEvent(button, 'click', function () { psv.toggleFullscreen(); });
 
-        		// Fullscreen icon left side
-        		var fullscreen_left = document.createElement('div');
-        		fullscreen_left.style.cssFloat = 'left';
-        		fullscreen_left.style.boxSizing = 'inherit';
-        		fullscreen_left.style.width = style.fullscreenThickness + 'px';
-        		fullscreen_left.style.height = fullscreen_vertical_space + 'px';
-        		fullscreen_left.style.borderStyle = 'solid';
-        		fullscreen_left.style.borderColor = style.buttonsColor + ' transparent';
-        		fullscreen_left.style.borderWidth = fullscreen_vertical_border + 'px 0';
-        		button.appendChild(fullscreen_left);
+				// Fullscreen icon left side
+				var fullscreen_left = document.createElement('div');
+				fullscreen_left.style.cssFloat = 'left';
+				fullscreen_left.style.boxSizing = 'inherit';
+				fullscreen_left.style.width = style.fullscreenThickness + 'px';
+				fullscreen_left.style.height = fullscreen_vertical_space + 'px';
+				fullscreen_left.style.borderStyle = 'solid';
+				fullscreen_left.style.borderColor = style.buttonsColor + ' transparent';
+				fullscreen_left.style.borderWidth = fullscreen_vertical_border + 'px 0';
+				button.appendChild(fullscreen_left);
 
-        		// Fullscreen icon top/bottom sides (first half)
-        		var fullscreen_tb_1 = document.createElement('div');
-        		fullscreen_tb_1.style.cssFloat = 'left';
-        		fullscreen_tb_1.style.boxSizing = 'inherit';
-        		fullscreen_tb_1.style.width = fullscreen_horizontal_border + 'px';
-        		fullscreen_tb_1.style.height = fullscreen_vertical_int + 'px';
-        		fullscreen_tb_1.style.borderStyle = 'solid';
-        		fullscreen_tb_1.style.borderColor = style.buttonsColor + ' transparent';
-        		fullscreen_tb_1.style.borderWidth = style.fullscreenThickness + 'px 0';
-        		button.appendChild(fullscreen_tb_1);
+				// Fullscreen icon top/bottom sides (first half)
+				var fullscreen_tb_1 = document.createElement('div');
+				fullscreen_tb_1.style.cssFloat = 'left';
+				fullscreen_tb_1.style.boxSizing = 'inherit';
+				fullscreen_tb_1.style.width = fullscreen_horizontal_border + 'px';
+				fullscreen_tb_1.style.height = fullscreen_vertical_int + 'px';
+				fullscreen_tb_1.style.borderStyle = 'solid';
+				fullscreen_tb_1.style.borderColor = style.buttonsColor + ' transparent';
+				fullscreen_tb_1.style.borderWidth = style.fullscreenThickness + 'px 0';
+				button.appendChild(fullscreen_tb_1);
 
-        		// Fullscreen icon top/bottom sides (second half)
-        		var fullscreen_tb_2 = document.createElement('div');
-        		fullscreen_tb_2.style.cssFloat = 'left';
-        		fullscreen_tb_2.style.boxSizing = 'inherit';
-        		fullscreen_tb_2.style.marginLeft = fullscreen_horizontal_space + 'px';
-        		fullscreen_tb_2.style.width = fullscreen_horizontal_border + 'px';
-        		fullscreen_tb_2.style.height = fullscreen_vertical_int + 'px';
-        		fullscreen_tb_2.style.borderStyle = 'solid';
-        		fullscreen_tb_2.style.borderColor = style.buttonsColor + ' transparent';
-        		fullscreen_tb_2.style.borderWidth = style.fullscreenThickness + 'px 0';
-        		button.appendChild(fullscreen_tb_2);
+				// Fullscreen icon top/bottom sides (second half)
+				var fullscreen_tb_2 = document.createElement('div');
+				fullscreen_tb_2.style.cssFloat = 'left';
+				fullscreen_tb_2.style.boxSizing = 'inherit';
+				fullscreen_tb_2.style.marginLeft = fullscreen_horizontal_space + 'px';
+				fullscreen_tb_2.style.width = fullscreen_horizontal_border + 'px';
+				fullscreen_tb_2.style.height = fullscreen_vertical_int + 'px';
+				fullscreen_tb_2.style.borderStyle = 'solid';
+				fullscreen_tb_2.style.borderColor = style.buttonsColor + ' transparent';
+				fullscreen_tb_2.style.borderWidth = style.fullscreenThickness + 'px 0';
+				button.appendChild(fullscreen_tb_2);
 
-        		// Fullscreen icon right side
-        		var fullscreen_right = document.createElement('div');
-        		fullscreen_right.style.cssFloat = 'left';
-        		fullscreen_right.style.boxSizing = 'inherit';
-        		fullscreen_right.style.width = style.fullscreenThickness + 'px';
-        		fullscreen_right.style.height = fullscreen_vertical_space + 'px';
-        		fullscreen_right.style.borderStyle = 'solid';
-        		fullscreen_right.style.borderColor = style.buttonsColor + ' transparent';
-        		fullscreen_right.style.borderWidth = fullscreen_vertical_border + 'px 0';
-        		button.appendChild(fullscreen_right);
+				// Fullscreen icon right side
+				var fullscreen_right = document.createElement('div');
+				fullscreen_right.style.cssFloat = 'left';
+				fullscreen_right.style.boxSizing = 'inherit';
+				fullscreen_right.style.width = style.fullscreenThickness + 'px';
+				fullscreen_right.style.height = fullscreen_vertical_space + 'px';
+				fullscreen_right.style.borderStyle = 'solid';
+				fullscreen_right.style.borderColor = style.buttonsColor + ' transparent';
+				fullscreen_right.style.borderWidth = fullscreen_vertical_border + 'px 0';
+				button.appendChild(fullscreen_right);
 
-        		var fullscreen_clearer = document.createElement('div');
-        		fullscreen_clearer.style.clear = 'left';
-        		button.appendChild(fullscreen_clearer);
+				var fullscreen_clearer = document.createElement('div');
+				fullscreen_clearer.style.clear = 'left';
+				button.appendChild(fullscreen_clearer);
 
-                // (In)active
-                psv.addAction('fullscreen-mode', toggleActive);
+				// (In)active
+				psv.addAction('fullscreen-mode', toggleActive);
 
-                break;
+				break;
 
-            case 'orientation':
-                // Gyroscope icon sizes
-                var gyroscope_sphere_width = style.buttonsHeight - style.gyroscopeThickness * 2;
-                var gyroscope_ellipses_big_axis = gyroscope_sphere_width - style.gyroscopeThickness * 4;
-                var gyroscope_ellipses_little_axis = gyroscope_sphere_width / 10;
+			case 'orientation':
+				// Gyroscope icon sizes
+				var gyroscope_sphere_width = style.buttonsHeight - style.gyroscopeThickness * 2;
+				var gyroscope_ellipses_big_axis = gyroscope_sphere_width - style.gyroscopeThickness * 4;
+				var gyroscope_ellipses_little_axis = gyroscope_sphere_width / 10;
 
-                // Gyroscope button
-        		button = document.createElement('div');
-        		button.style.cssFloat = 'right';
-        		button.style.boxSizing = 'inherit';
-        		button.style.padding = '10px';
-                button.style.width = style.buttonsHeight + 'px';
-                button.style.height = style.buttonsHeight + 'px';
-                button.style.backgroundColor = style.buttonsBackgroundColor;
-                button.style.position = 'relative';
-                button.style.cursor = 'pointer';
+				// Gyroscope button
+				button = document.createElement('div');
+				button.style.cssFloat = 'right';
+				button.style.boxSizing = 'inherit';
+				button.style.padding = '10px';
+				button.style.width = style.buttonsHeight + 'px';
+				button.style.height = style.buttonsHeight + 'px';
+				button.style.backgroundColor = style.buttonsBackgroundColor;
+				button.style.position = 'relative';
+				button.style.cursor = 'pointer';
 
-                addEvent(button, 'click', function(){psv.toggleDeviceOrientation();});
+				addEvent(button, 'click', function () { psv.toggleDeviceOrientation(); });
 
-                var gyroscope_sphere = document.createElement('div');
-        		gyroscope_sphere.style.boxSizing = 'inherit';
-                gyroscope_sphere.style.width = gyroscope_sphere_width + 'px';
-                gyroscope_sphere.style.height = gyroscope_sphere_width + 'px';
-                gyroscope_sphere.style.borderRadius = '50%';
-                gyroscope_sphere.style.border = style.gyroscopeThickness + 'px solid ' + style.buttonsColor;
-                button.appendChild(gyroscope_sphere);
+				var gyroscope_sphere = document.createElement('div');
+				gyroscope_sphere.style.boxSizing = 'inherit';
+				gyroscope_sphere.style.width = gyroscope_sphere_width + 'px';
+				gyroscope_sphere.style.height = gyroscope_sphere_width + 'px';
+				gyroscope_sphere.style.borderRadius = '50%';
+				gyroscope_sphere.style.border = style.gyroscopeThickness + 'px solid ' + style.buttonsColor;
+				button.appendChild(gyroscope_sphere);
 
-                var gyroscope_hor_ellipsis = document.createElement('div');
-        		gyroscope_hor_ellipsis.style.boxSizing = 'inherit';
-                gyroscope_hor_ellipsis.style.width = gyroscope_ellipses_big_axis + 'px';
-                gyroscope_hor_ellipsis.style.height = gyroscope_ellipses_little_axis + 'px';
-                gyroscope_hor_ellipsis.style.borderRadius = '50%';
-                gyroscope_hor_ellipsis.style.border = style.gyroscopeThickness + 'px solid ' + style.buttonsColor;
-                gyroscope_hor_ellipsis.style.position = 'absolute';
-                gyroscope_hor_ellipsis.style.top = '50%';
-                gyroscope_hor_ellipsis.style.left = '50%';
-                gyroscope_hor_ellipsis.style.marginTop = -(gyroscope_ellipses_little_axis / 2 + style.gyroscopeThickness) + 'px';
-                gyroscope_hor_ellipsis.style.marginLeft = -(gyroscope_ellipses_big_axis / 2 + style.gyroscopeThickness) + 'px';
-                button.appendChild(gyroscope_hor_ellipsis);
+				var gyroscope_hor_ellipsis = document.createElement('div');
+				gyroscope_hor_ellipsis.style.boxSizing = 'inherit';
+				gyroscope_hor_ellipsis.style.width = gyroscope_ellipses_big_axis + 'px';
+				gyroscope_hor_ellipsis.style.height = gyroscope_ellipses_little_axis + 'px';
+				gyroscope_hor_ellipsis.style.borderRadius = '50%';
+				gyroscope_hor_ellipsis.style.border = style.gyroscopeThickness + 'px solid ' + style.buttonsColor;
+				gyroscope_hor_ellipsis.style.position = 'absolute';
+				gyroscope_hor_ellipsis.style.top = '50%';
+				gyroscope_hor_ellipsis.style.left = '50%';
+				gyroscope_hor_ellipsis.style.marginTop = -(gyroscope_ellipses_little_axis / 2 + style.gyroscopeThickness) + 'px';
+				gyroscope_hor_ellipsis.style.marginLeft = -(gyroscope_ellipses_big_axis / 2 + style.gyroscopeThickness) + 'px';
+				button.appendChild(gyroscope_hor_ellipsis);
 
-                var gyroscope_ver_ellipsis = document.createElement('div');
-        		gyroscope_ver_ellipsis.style.boxSizing = 'inherit';
-                gyroscope_ver_ellipsis.style.width = gyroscope_ellipses_little_axis + 'px';
-                gyroscope_ver_ellipsis.style.height = gyroscope_ellipses_big_axis + 'px';
-                gyroscope_ver_ellipsis.style.borderRadius = '50%';
-                gyroscope_ver_ellipsis.style.border = style.gyroscopeThickness + 'px solid ' + style.buttonsColor;
-                gyroscope_ver_ellipsis.style.position = 'absolute';
-                gyroscope_ver_ellipsis.style.top = '50%';
-                gyroscope_ver_ellipsis.style.left = '50%';
-                gyroscope_ver_ellipsis.style.marginTop = -(gyroscope_ellipses_big_axis / 2 + style.gyroscopeThickness) + 'px';
-                gyroscope_ver_ellipsis.style.marginLeft = -(gyroscope_ellipses_little_axis / 2 + style.gyroscopeThickness) + 'px';
-                button.appendChild(gyroscope_ver_ellipsis);
+				var gyroscope_ver_ellipsis = document.createElement('div');
+				gyroscope_ver_ellipsis.style.boxSizing = 'inherit';
+				gyroscope_ver_ellipsis.style.width = gyroscope_ellipses_little_axis + 'px';
+				gyroscope_ver_ellipsis.style.height = gyroscope_ellipses_big_axis + 'px';
+				gyroscope_ver_ellipsis.style.borderRadius = '50%';
+				gyroscope_ver_ellipsis.style.border = style.gyroscopeThickness + 'px solid ' + style.buttonsColor;
+				gyroscope_ver_ellipsis.style.position = 'absolute';
+				gyroscope_ver_ellipsis.style.top = '50%';
+				gyroscope_ver_ellipsis.style.left = '50%';
+				gyroscope_ver_ellipsis.style.marginTop = -(gyroscope_ellipses_big_axis / 2 + style.gyroscopeThickness) + 'px';
+				gyroscope_ver_ellipsis.style.marginLeft = -(gyroscope_ellipses_little_axis / 2 + style.gyroscopeThickness) + 'px';
+				button.appendChild(gyroscope_ver_ellipsis);
 
-                // (In)active
-                psv.addAction('device-orientation', toggleActive);
+				// (In)active
+				psv.addAction('device-orientation', toggleActive);
 
-                break;
+				break;
 
-            case 'virtual-reality':
-                // Sizes
-                var vr_width = style.buttonsHeight * style.virtualRealityRatio;
+			case 'virtual-reality':
+				// Sizes
+				var vr_width = style.buttonsHeight * style.virtualRealityRatio;
 
-                var vr_eye_diameter = vr_width / 4;
-                var vr_eye_offset = vr_eye_diameter / 2;
+				var vr_eye_diameter = vr_width / 4;
+				var vr_eye_offset = vr_eye_diameter / 2;
 
-                // Button
-                button = document.createElement('div');
-                button.style.cssFloat = 'right';
-                button.style.position = 'relative';
-        		button.style.boxSizing = 'inherit';
-                button.style.padding = '10px';
-                button.style.width = vr_width + 'px';
-                button.style.height = style.buttonsHeight + 'px';
-                button.style.backgroundColor = style.buttonsBackgroundColor;
-                button.style.cursor = 'pointer';
+				// Button
+				button = document.createElement('div');
+				button.style.cssFloat = 'right';
+				button.style.position = 'relative';
+				button.style.boxSizing = 'inherit';
+				button.style.padding = '10px';
+				button.style.width = vr_width + 'px';
+				button.style.height = style.buttonsHeight + 'px';
+				button.style.backgroundColor = style.buttonsBackgroundColor;
+				button.style.cursor = 'pointer';
 
-                addEvent(button, 'click', function(){psv.toggleStereo();});
+				addEvent(button, 'click', function () { psv.toggleStereo(); });
 
-                // Icon
-                var vr_rect = document.createElement('div');
-        		vr_rect.style.boxSizing = 'inherit';
-                vr_rect.style.width = vr_width + 'px';
-                vr_rect.style.height = style.buttonsHeight + 'px';
-                vr_rect.style.borderRadius = style.virtualRealityBorderRadius + 'px';
-                vr_rect.style.backgroundColor = style.buttonsColor;
-                button.appendChild(vr_rect);
+				// Icon
+				var vr_rect = document.createElement('div');
+				vr_rect.style.boxSizing = 'inherit';
+				vr_rect.style.width = vr_width + 'px';
+				vr_rect.style.height = style.buttonsHeight + 'px';
+				vr_rect.style.borderRadius = style.virtualRealityBorderRadius + 'px';
+				vr_rect.style.backgroundColor = style.buttonsColor;
+				button.appendChild(vr_rect);
 
-                var left_eye = document.createElement('div');
-        		left_eye.style.boxSizing = 'inherit';
-                left_eye.style.width = vr_eye_diameter + 'px';
-                left_eye.style.height = vr_eye_diameter + 'px';
-                left_eye.style.position = 'absolute';
-                left_eye.style.top = (vr_eye_offset + 10) + 'px';
-                left_eye.style.left = (vr_eye_offset + 10) + 'px';
-                left_eye.style.borderRadius = '50%';
-                left_eye.style.backgroundColor = style.backgroundColor;
-                button.appendChild(left_eye);
+				var left_eye = document.createElement('div');
+				left_eye.style.boxSizing = 'inherit';
+				left_eye.style.width = vr_eye_diameter + 'px';
+				left_eye.style.height = vr_eye_diameter + 'px';
+				left_eye.style.position = 'absolute';
+				left_eye.style.top = (vr_eye_offset + 10) + 'px';
+				left_eye.style.left = (vr_eye_offset + 10) + 'px';
+				left_eye.style.borderRadius = '50%';
+				left_eye.style.backgroundColor = style.backgroundColor;
+				button.appendChild(left_eye);
 
-                var right_eye = document.createElement('div');
-        		right_eye.style.boxSizing = 'inherit';
-                right_eye.style.width = vr_eye_diameter + 'px';
-                right_eye.style.height = vr_eye_diameter + 'px';
-                right_eye.style.position = 'absolute';
-                right_eye.style.top = (vr_eye_offset + 10) + 'px';
-                right_eye.style.right = (vr_eye_offset + 10) + 'px';
-                right_eye.style.borderRadius = '50%';
-                right_eye.style.backgroundColor = style.backgroundColor;
-                button.appendChild(right_eye);
+				var right_eye = document.createElement('div');
+				right_eye.style.boxSizing = 'inherit';
+				right_eye.style.width = vr_eye_diameter + 'px';
+				right_eye.style.height = vr_eye_diameter + 'px';
+				right_eye.style.position = 'absolute';
+				right_eye.style.top = (vr_eye_offset + 10) + 'px';
+				right_eye.style.right = (vr_eye_offset + 10) + 'px';
+				right_eye.style.borderRadius = '50%';
+				right_eye.style.backgroundColor = style.backgroundColor;
+				button.appendChild(right_eye);
 
-                var nose = document.createElement('div');
-        		nose.style.boxSizing = 'inherit';
-                nose.style.width = vr_eye_diameter + 'px';
-                nose.style.height = (style.buttonsHeight / 2) + 'px';
-                nose.style.position = 'absolute';
-                nose.style.left = '50%';
-                nose.style.bottom = '10px';
-                nose.style.marginLeft = -(vr_eye_diameter / 2) + 'px';
-                nose.style.borderTopLeftRadius = '50% 60%';
-                nose.style.borderTopRightRadius = '50% 60%';
-                nose.style.backgroundColor = style.backgroundColor;
-                button.appendChild(nose);
+				var nose = document.createElement('div');
+				nose.style.boxSizing = 'inherit';
+				nose.style.width = vr_eye_diameter + 'px';
+				nose.style.height = (style.buttonsHeight / 2) + 'px';
+				nose.style.position = 'absolute';
+				nose.style.left = '50%';
+				nose.style.bottom = '10px';
+				nose.style.marginLeft = -(vr_eye_diameter / 2) + 'px';
+				nose.style.borderTopLeftRadius = '50% 60%';
+				nose.style.borderTopRightRadius = '50% 60%';
+				nose.style.backgroundColor = style.backgroundColor;
+				button.appendChild(nose);
 
-                //(In)active
-                psv.addAction('stereo-effect', toggleActive);
+				//(In)active
+				psv.addAction('stereo-effect', toggleActive);
 
-                break;
-        }
-    };
+				break;
+		}
+	};
 
     /**
      * Returns the button element.
@@ -2501,9 +2505,9 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {HTMLElement} The button
      **/
 
-    this.getButton = function() {
-        return button;
-    };
+	this.getButton = function () {
+		return button;
+	};
 
     /**
      * Changes the active state of the button.
@@ -2512,13 +2516,13 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var toggleActive = function(active) {
-        if (active)
-            button.style.backgroundColor = style.activeButtonsBackgroundColor;
+	var toggleActive = function (active) {
+		if (active)
+			button.style.backgroundColor = style.activeButtonsBackgroundColor;
 
-        else
-            button.style.backgroundColor = style.buttonsBackgroundColor;
-    };
+		else
+			button.style.backgroundColor = style.buttonsBackgroundColor;
+	};
 
     /**
      * Moves the zoom cursor.
@@ -2527,9 +2531,9 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var moveZoomValue = function(level) {
-        zoom_value.style.left = (level / 100 * style.zoomRangeWidth - style.zoomRangeDisk / 2) + 'px';
-    };
+	var moveZoomValue = function (level) {
+		zoom_value.style.left = (level / 100 * style.zoomRangeWidth - style.zoomRangeDisk / 2) + 'px';
+	};
 
     /**
      * The user wants to zoom.
@@ -2538,9 +2542,9 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var initZoomChangeWithMouse = function(evt) {
-        initZoomChange(parseInt(evt.clientX));
-    };
+	var initZoomChangeWithMouse = function (evt) {
+		initZoomChange(parseInt(evt.clientX));
+	};
 
     /**
      * The user wants to zoom (mobile version).
@@ -2549,11 +2553,11 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var initZoomChangeByTouch = function(evt) {
-        var touch = evt.touches[0];
-        if (touch.target == zoom_range_bg || touch.target == zoom_range || touch.target == zoom_value)
-            initZoomChange(parseInt(touch.clientX));
-    };
+	var initZoomChangeByTouch = function (evt) {
+		var touch = evt.touches[0];
+		if (touch.target == zoom_range_bg || touch.target == zoom_range || touch.target == zoom_value)
+			initZoomChange(parseInt(touch.clientX));
+	};
 
     /**
      * Initializes a zoom change.
@@ -2562,10 +2566,10 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var initZoomChange = function(x) {
-        mousedown = true;
-        changeZoom(x);
-    };
+	var initZoomChange = function (x) {
+		mousedown = true;
+		changeZoom(x);
+	};
 
     /**
      * The user wants to stop zooming.
@@ -2574,9 +2578,9 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var stopZoomChange = function(evt) {
-        mousedown = false;
-    };
+	var stopZoomChange = function (evt) {
+		mousedown = false;
+	};
 
     /**
      * The user moves the zoom cursor.
@@ -2585,10 +2589,10 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var changeZoomWithMouse = function(evt) {
-        evt.preventDefault();
-        changeZoom(parseInt(evt.clientX));
-    };
+	var changeZoomWithMouse = function (evt) {
+		evt.preventDefault();
+		changeZoom(parseInt(evt.clientX));
+	};
 
     /**
      * The user moves the zoom cursor (mobile version).
@@ -2597,13 +2601,13 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var changeZoomByTouch = function(evt) {
-        var touch = evt.touches[0];
-        if (touch.target == zoom_range_bg || touch.target == zoom_range || touch.target == zoom_value) {
-            evt.preventDefault();
-            changeZoom(parseInt(touch.clientX));
-        }
-    };
+	var changeZoomByTouch = function (evt) {
+		var touch = evt.touches[0];
+		if (touch.target == zoom_range_bg || touch.target == zoom_range || touch.target == zoom_value) {
+			evt.preventDefault();
+			changeZoom(parseInt(touch.clientX));
+		}
+	};
 
     /**
      * Zoom change.
@@ -2612,13 +2616,13 @@ var PSVNavBarButton = function(psv, type, style) {
      * @return {void}
      **/
 
-    var changeZoom = function(x) {
-        if (mousedown) {
-            var user_input = x - zoom_range.getBoundingClientRect().left;
-            var zoom_level = user_input / style.zoomRangeWidth * 100;
-            psv.zoom(zoom_level);
-        }
-    };
+	var changeZoom = function (x) {
+		if (mousedown) {
+			var user_input = x - zoom_range.getBoundingClientRect().left;
+			var zoom_level = user_input / style.zoomRangeWidth * 100;
+			psv.zoom(zoom_level);
+		}
+	};
 
 	/**
 	 * Change zoom by scrolling.
@@ -2627,17 +2631,17 @@ var PSVNavBarButton = function(psv, type, style) {
 	 * @return {void}
 	 **/
 
-	var changeZoomOnMouseWheel = function(evt) {
+	var changeZoomOnMouseWheel = function (evt) {
 		psv.mouseWheel(evt);
 	};
 
-    // Some useful attributes
-    var zoom_range_bg, zoom_range, zoom_value;
-    var mousedown = false;
+	// Some useful attributes
+	var zoom_range_bg, zoom_range, zoom_value;
+	var mousedown = false;
 
-    // Create the button
-    var button;
-    create();
+	// Create the button
+	var button;
+	create();
 };
 /*
 * Sphoords v0.1.1
@@ -2669,14 +2673,14 @@ var PSVNavBarButton = function(psv, type, style) {
  * @class
  **/
 
-var Sphoords = function() {
+var Sphoords = function () {
 	/**
 	 * Detects the used browser engine.
 	 * @private
 	 * @return {void}
 	 **/
 
-	var detectBrowserEngine = function() {
+	var detectBrowserEngine = function () {
 		// User-Agent
 		var ua = navigator.userAgent;
 
@@ -2711,7 +2715,7 @@ var Sphoords = function() {
 	 * @return {number} The principal angle
 	 **/
 
-	var getPrincipalAngle = function(angle) {
+	var getPrincipalAngle = function (angle) {
 		return angle - Math.floor(angle / 360.0) * 360.0;
 	};
 
@@ -2721,7 +2725,7 @@ var Sphoords = function() {
 	 * @return {boolean} `true` if event is attached, `false` otherwise
 	 **/
 
-	this.start = function() {
+	this.start = function () {
 		if (Sphoords.isDeviceOrientationSupported) {
 			window.addEventListener('deviceorientation', onDeviceOrientation, false);
 
@@ -2741,7 +2745,7 @@ var Sphoords = function() {
 	 * @return {void}
 	 **/
 
-	this.stop = function() {
+	this.stop = function () {
 		// Is there something to remove?
 		if (recording) {
 			window.removeEventListener('deviceorientation', onDeviceOrientation, false);
@@ -2756,7 +2760,7 @@ var Sphoords = function() {
 	 * @return {void}
 	 **/
 
-	this.toggle = function() {
+	this.toggle = function () {
 		if (recording)
 			this.stop();
 
@@ -2770,7 +2774,7 @@ var Sphoords = function() {
 	 * @return {boolean} `true` if event is attached, `false` otherwise
 	 **/
 
-	this.isEventAttached = function() {
+	this.isEventAttached = function () {
 		return recording;
 	};
 
@@ -2781,7 +2785,7 @@ var Sphoords = function() {
 	 * @return {void}
 	 **/
 
-	var onDeviceOrientation = function(evt) {
+	var onDeviceOrientation = function (evt) {
 		// Current screen orientation
 		orientation = Sphoords.getScreenOrientation();
 
@@ -2820,11 +2824,11 @@ var Sphoords = function() {
 				}
 
 				//fix to work on iOS (tested on Safari and Chrome)
-				if( engine === 'WebKit' && !!window.orientation ){
-					if( phi < 0 ){
+				if (engine === 'WebKit' && !!window.orientation) {
+					if (phi < 0) {
 						phi = (phi + 180) * -1;
 					}
-					if( theta >= 180 ){
+					if (theta >= 180) {
 						theta = theta - 180;
 					} else {
 						theta = theta + 180;
@@ -2856,11 +2860,11 @@ var Sphoords = function() {
 				}
 
 				//fix to work on iOS (tested on Safari and Chrome)
-				if( engine === 'WebKit' && !!window.orientation ){
-					if( phi < 0 ){
+				if (engine === 'WebKit' && !!window.orientation) {
+					if (phi < 0) {
 						phi = (phi + 180) * -1;
 					}
-					if( theta >= 180 ){
+					if (theta >= 180) {
 						theta = theta - 180;
 					} else {
 						theta = theta + 180;
@@ -2901,11 +2905,11 @@ var Sphoords = function() {
 	 * @return {object} Longitude/latitude couple
 	 **/
 
-	this.getCoordinates = function() {
+	this.getCoordinates = function () {
 		return {
-				longitude: long,
-				latitude: lat
-			};
+			longitude: long,
+			latitude: lat
+		};
 	};
 
 	/**
@@ -2913,11 +2917,11 @@ var Sphoords = function() {
 	 * @return {object} Longitude/latitude couple
 	 **/
 
-	this.getCoordinatesInDegrees = function() {
+	this.getCoordinatesInDegrees = function () {
 		return {
-				longitude: long_deg,
-				latitude: lat_deg
-			};
+			longitude: long_deg,
+			latitude: lat_deg
+		};
 	};
 
 	/**
@@ -2925,7 +2929,7 @@ var Sphoords = function() {
 	 * @return {string|null} The screen orientation (portrait-primary, portrait-secondary, landscape-primary, landscape-secondary) or `null` if not supported
 	 **/
 
-	this.getScreenOrientation = function() {
+	this.getScreenOrientation = function () {
 		return orientation;
 	};
 
@@ -2936,7 +2940,7 @@ var Sphoords = function() {
 	 * @return {void}
 	 **/
 
-	this.addListener = function(f) {
+	this.addListener = function (f) {
 		listeners.push(f);
 	};
 
@@ -2946,7 +2950,7 @@ var Sphoords = function() {
 	 * @return {void}
 	 **/
 
-	var executeListeners = function() {
+	var executeListeners = function () {
 		if (!!listeners.length) {
 			for (var i = 0, l = listeners.length; i < l; ++i) {
 				listeners[i]({
@@ -2985,7 +2989,7 @@ var Sphoords = function() {
  * @return {string|null} Current screen orientation, `null` if not supported
  **/
 
-Sphoords.getScreenOrientation = function() {
+Sphoords.getScreenOrientation = function () {
 	var screen_orientation = null;
 
 	if (!!screen.orientation)
@@ -3026,7 +3030,7 @@ Sphoords.isDeviceOrientationSupported = false;
 
 // Just testing if window.DeviceOrientationEvent is defined is not enough
 // In fact, it can return false positives with some desktop browsers which run in computers that don't have the dedicated hardware
-(function() {
+(function () {
 	// We attach the right event
 	// If it is fired, the API is really supported so we can indicate true :)
 	if (!!window.DeviceOrientationEvent && Sphoords.getScreenOrientation() !== null) {
