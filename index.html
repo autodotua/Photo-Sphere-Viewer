@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Photo Sphere Viewer</title>
+	<meta name="viewport" content="initial-scale=1.0" />
+	<script src="three.min.js"></script>
+	<script src="photo-sphere-viewer.min.js"></script>
+	<script src="js/jquery-3.5.0.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<style>
+		html,
+		body {
+			margin: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+
+		.buttons {
+			position: absolute;
+			top: 12px;
+			right: 24px;
+			overflow-y: auto;
+			height: 100%;
+		}
+
+		.custom-file {
+			width: 180px;
+		}
+
+		.btn-img {
+			width: 180px;
+		}
+
+		img {
+			width: 24px;
+			height: 24px;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin-top: -12px;
+			margin-left: -12px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container"></div>
+	<div id="buttons" class="buttons">
+		<div class="custom-file">
+			<input type="file" name="file" class="custom-file-input" id="file" multiple=""
+				aria-describedby="customFileAddon" lang="zh-cn">
+			<label id="fileLabel" class="custom-file-label" for="customFile" data-browse="浏览">选择图片</label>
+		</div>
+	</div>
+	<script>
+		function loadImg(img) {
+			var div = document.getElementById('container');
+			var PSV = new PhotoSphereViewer({
+				panorama: img,
+				container: div,
+				navbar: true,
+				navbar_style: {
+					backgroundColor: 'rgba(58, 67, 77, 0.7)'
+				},
+				loading_msg: "正在加载",
+				zoom_speed: 10,
+				min_fov: 20,
+				max_fov: 120,
+				loading_img: "loading.gif",
+				onready: () => {
+					$("#buttons").show();
+				}
+			});
+			$("#buttons").hide();
+		}
+		async function load() {
+			const imgsResp = await fetch("imgs.json");
+			const imgs = await imgsResp.json();
+			if (imgs.length > 0) {
+				for (const img of imgs) {
+					const button = $("<button/>", { "class": "btn btn-img btn-light" })
+						.text(img.split("/").slice(-1)[0].split(".")[0]);
+					button.click(() => loadImg(img));
+					$("#buttons").append("<br />")
+					$("#buttons").append("<br />")
+					$("#buttons").append(button)
+				}
+				//loadImg(imgs[0]);
+			}
+
+		}
+		// Load a panorama stored on the user's computer
+		function upload() {
+			// Retrieve the chosen file and create the FileReader object
+			var file = document.getElementById('file').files[0];
+			var reader = new FileReader();
+
+			reader.onload = function () {
+				console.log(reader.result);
+
+				loadImg(reader.result);
+			};
+			reader.readAsDataURL(file);
+		}
+		$("#file").change(upload)
+		load();
+	</script>
+</body>
+
+</html>
